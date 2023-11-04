@@ -32,9 +32,6 @@ class Marble:
             self.edges.append([face[2], face[3]])
             self.edges.append([face[3], face[0]])
 
-        self.plane = Plane()
-        self.circle = Circle()
-
     def move(self, x: int, y: int, z: int):
         new_vertices = []
         for vertex in self.vertices:
