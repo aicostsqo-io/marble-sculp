@@ -15,7 +15,7 @@ class Plane:
         self.edges.append([self.face[2], self.face[3]])
         self.edges.append([self.face[3], self.face[0]])
 
-        self.move(0, -(height / 4), -(width / 4))
+        self.move(0.5, -(height / 4), -(width / 4))
 
     def move(self, x: int, y: int, z: int):
         new_vertices = []
