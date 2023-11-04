@@ -2,7 +2,8 @@ import math
 
 
 class Circle:
-    def __init__(self, radius: int = 1, segment: int = 32):
+    def __init__(self, radius: int = 1, segment: int = 32, two_ways: bool = True):
+        self.type = "circle"
         self.radius = radius
         self.segment = segment
 
@@ -22,4 +23,11 @@ class Circle:
         for i in range(1, segment):
             self.faces.append([0, i, i + 1])
 
-        self.faces.append([0, 1, segment])
+        self.faces.append([0, segment, 1])
+
+        if two_ways:
+            temp_faces = []
+            for face in self.faces:
+                temp_faces.append([face[0], face[2], face[1]])
+
+            self.faces = self.faces + temp_faces
