@@ -39,6 +39,6 @@ marb.move(-0.5, -0.5, -0.5)
 scene.add(marb)
 
 circ = Circle()
-circ.rotate(180, 0)
+circ.rotate(45, 10)
 scene.add(circ)
 scene.convert_obj()
