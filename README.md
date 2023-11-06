@@ -2,5 +2,5 @@
 3D Marble Processing Tool
 </br>
 <p align="center">
-<img src="./images/marble.png" width=300 center>
+<img src="./images/marble.jpeg" width=600 center>
 </p>
