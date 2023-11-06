@@ -36,6 +36,7 @@ class Circle:
         deg_to_rad = math.pi / 180
         temp_vertices = copy.deepcopy(self.vertices)
         for ind, vertex in enumerate(self.vertices):
+            # --- Dip Rotate ---
             temp_vertices[ind] = self.product(
                 [
                     [math.cos(dip * deg_to_rad), 0, math.sin(dip * deg_to_rad)],
@@ -43,6 +44,23 @@ class Circle:
                     [-math.sin(dip * deg_to_rad), 0, math.cos(dip * deg_to_rad)],
                 ],
                 self.vertices[ind],
+            )
+            # --- Dip Direction Rotate
+            temp_vertices[ind] = self.product(
+                [
+                    [1, 0, 0],
+                    [
+                        0,
+                        math.cos(dip_direction * deg_to_rad),
+                        -math.sin(dip_direction * deg_to_rad),
+                    ],
+                    [
+                        0,
+                        math.sin(dip_direction * deg_to_rad),
+                        math.cos(dip_direction * deg_to_rad),
+                    ],
+                ],
+                temp_vertices[ind],
             )
         self.vertices = temp_vertices
 
