@@ -8,5 +8,3 @@ class Discontinuity:
 
         for ind, value in enumerate(self.vertices):
             self.faces[0].append(ind)
-
-        print("asdasdsad", self.faces)
