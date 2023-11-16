@@ -1,4 +1,8 @@
 import math, copy
+import numpy as np
+from typing import List
+from disc import Discontinuity
+from utils import calculate_normal_plane
 
 
 class Circle:
@@ -9,6 +13,7 @@ class Circle:
 
         self.faces = []
         self.vertices = [[0.0, 0.0, 0.0]]
+        self.normal = [0, 0, 1]
         theta_length = 2 * math.pi
 
         for i in range(segment):
@@ -37,7 +42,7 @@ class Circle:
         temp_vertices = copy.deepcopy(self.vertices)
         for ind, vertex in enumerate(self.vertices):
             # --- Dip Rotate ---
-            temp_vertices[ind] = self.product(
+            temp_vertices[ind] = np.dot(
                 [
                     [math.cos(dip * deg_to_rad), 0, math.sin(dip * deg_to_rad)],
                     [0, 1, 0],
@@ -45,8 +50,9 @@ class Circle:
                 ],
                 self.vertices[ind],
             )
+
             # --- Dip Direction Rotate
-            temp_vertices[ind] = self.product(
+            temp_vertices[ind] = np.dot(
                 [
                     [1, 0, 0],
                     [
@@ -64,10 +70,32 @@ class Circle:
             )
         self.vertices = temp_vertices
 
-    def product(self, matris: list, pos: list) -> list:
-        temp_pos = [0, 0, 0]
-        for i in range(3):
-            temp_pos[i] = (
-                matris[i][0] * pos[0] + matris[i][1] * pos[1] + matris[i][2] * pos[2]
-            )
-        return temp_pos
+        self.normal = calculate_normal_plane(
+            self.vertices[1], self.vertices[2], self.vertices[3]
+        )
+
+    def intersections(self, edges: List[List[int]], vertices: List[List[int]]):
+        lines = [[vertices[i[0]], vertices[i[1]]] for i in edges]
+        intersection_list = []
+        for line in lines:
+            start_sign = np.array(self.normal).dot(line[0])
+            end_sign = np.array(self.normal).dot(line[1])
+            # print(start_sign, end_sign)
+            if (start_sign < 0 and end_sign > 0) or (end_sign < 0 and start_sign > 0):
+                direction = np.array(line[0]) - np.array(line[1])
+                denominator = np.array(self.normal).dot(direction)
+                # print(denominator)
+
+                t = -(np.array(line[0]).dot(self.normal)) / denominator
+
+                # print(line[0], direction, t)
+                temp_coord = [line[0][0], line[0][1], line[0][2]]
+                temp_coord[0] += direction[0] * t
+                temp_coord[1] += direction[1] * t
+                temp_coord[2] += direction[2] * t
+
+                if temp_coord not in intersection_list:
+                    intersection_list.append(temp_coord)
+
+        print(intersection_list)
+        return Discontinuity(intersection_list)
