@@ -18,16 +18,16 @@ class Scene:
             for vertex in obj.vertices:
                 data += f"v {vertex[0]} {vertex[1]} {vertex[2]}\n"
 
+        offset = 1
         for ind, obj in enumerate(self.objects):
             # Faces
-            offset = 1
-            if ind > 0:
-                offset = ind * index_map["vertices"][ind - 1] + 1
             for face in obj.faces:
                 temp = ""
                 for vertex in face:
                     temp += f"{offset+vertex} "
                 data += f"f {temp}\n"
+
+            offset += index_map["vertices"][ind]
 
         with open("./object.obj", "w") as fp:
             fp.write(data)
@@ -39,6 +39,8 @@ marb.move(-0.5, -0.5, -0.5)
 scene.add(marb)
 
 circ = Circle()
-circ.rotate(45, 10)
+circ.rotate(60, 45)
+# circ.intersections([[0.5, -0.5, 0.5], [0.5, -0.5, -0.5]])
 scene.add(circ)
+scene.add(circ.intersections(marb.edges, marb.vertices))
 scene.convert_obj()
