@@ -2,7 +2,7 @@ import math, copy
 import numpy as np
 from typing import List
 from disc import Discontinuity
-from utils import calculate_normal_plane
+from utils import calculate_normal_plane, sort_points
 
 
 class Circle:
@@ -36,6 +36,12 @@ class Circle:
                 temp_faces.append([face[0], face[2], face[1]])
 
             self.faces = self.faces + temp_faces
+
+    def move(self, x: int, y: int, z: int):
+        new_vertices = []
+        for vertex in self.vertices:
+            new_vertices.append([vertex[0] + x, vertex[1] + y, vertex[2] + z])
+        self.vertices = new_vertices
 
     def rotate(self, dip: int, dip_direction: int):
         deg_to_rad = math.pi / 180
@@ -97,5 +103,4 @@ class Circle:
                 if temp_coord not in intersection_list:
                     intersection_list.append(temp_coord)
 
-        print(intersection_list)
-        return Discontinuity(intersection_list)
+        return Discontinuity(sort_points(intersection_list))
