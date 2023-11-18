@@ -1,0 +1,233 @@
+[
+    {
+        "dip": 40,
+        "dip_direction": 65,
+        "px": 0,
+        "py": 0,
+        "pz": 1
+    },
+    {
+        "dip": 32,
+        "dip_direction": 64,
+        "px": 0.055,
+        "py": 0,
+        "pz": 1
+    },
+    {
+        "dip": 38,
+        "dip_direction": 72,
+        "px": 0,
+        "py": 0.54,
+        "pz": 1
+    },
+    {
+        "dip": 38,
+        "dip_direction": 68,
+        "px": 0,
+        "py": 2.32,
+        "pz": 1
+    },
+    {
+        "dip": 45,
+        "dip_direction": 335,
+        "px": 0,
+        "py": 5.75,
+        "pz": 1
+    },
+    {
+        "dip": 39,
+        "dip_direction": 71,
+        "px": 0,
+        "py": 4.015,
+        "pz": 1
+    },
+    {
+        "dip": 35,
+        "dip_direction": 70,
+        "px": 0,
+        "py": 4.972,
+        "pz": 1
+    },
+    {
+        "dip": 38,
+        "dip_direction": 68,
+        "px": 0,
+        "py": 7.52,
+        "pz": 1
+    },
+    {
+        "dip": 38,
+        "dip_direction": 337,
+        "px": 0,
+        "py": 10.33,
+        "pz": 1
+    },
+    {
+        "dip": 60,
+        "dip_direction": 340,
+        "px": 0,
+        "py": 10.177,
+        "pz": 1
+    },
+    {
+        "dip": 37,
+        "dip_direction": 67,
+        "px": 0,
+        "py": 8.473,
+        "pz": 1
+    },
+    {
+        "dip": 46,
+        "dip_direction": 340,
+        "px": 0,
+        "py": 11.016,
+        "pz": 1
+    },
+    {
+        "dip": 39,
+        "dip_direction": 67,
+        "px": 0,
+        "py": 10.165,
+        "pz": 1
+    },
+    {
+        "dip": 60,
+        "dip_direction": 341,
+        "px": 0,
+        "py": 12.377,
+        "pz": 1
+    },
+    {
+        "dip": 37,
+        "dip_direction": 66,
+        "px": 0,
+        "py": 11.523,
+        "pz": 1
+    },
+    {
+        "dip": 39,
+        "dip_direction": 66,
+        "px": 0,
+        "py": 12.915,
+        "pz": 1
+    },
+    {
+        "dip": 55,
+        "dip_direction": 334,
+        "px": 0,
+        "py": 15.55,
+        "pz": 1
+    },
+    {
+        "dip": 35,
+        "dip_direction": 65,
+        "px": 0,
+        "py": 14.422,
+        "pz": 1
+    },
+    {
+        "dip": 52,
+        "dip_direction": 330,
+        "px": 0,
+        "py": 18.531,
+        "pz": 1
+    },
+    {
+        "dip": 36,
+        "dip_direction": 68,
+        "px": 0,
+        "py": 17.024,
+        "pz": 1
+    },
+    {
+        "dip": 37,
+        "dip_direction": 66,
+        "px": 0,
+        "py": 17.123,
+        "pz": 1
+    },
+    {
+        "dip": 50,
+        "dip_direction": 330,
+        "px": 0,
+        "py": 20.039,
+        "pz": 1
+    },
+    {
+        "dip": 55,
+        "dip_direction": 340,
+        "px": 0,
+        "py": 21.3,
+        "pz": 1
+    },
+    {
+        "dip": 62,
+        "dip_direction": 338,
+        "px": 0,
+        "py": 21.282,
+        "pz": 1
+    },
+    {
+        "dip": 72,
+        "dip_direction": 335,
+        "px": 0,
+        "py": 21.425,
+        "pz": 1
+    },
+    {
+        "dip": 35,
+        "dip_direction": 65,
+        "px": 0,
+        "py": 19.772,
+        "pz": 1
+    },
+    {
+        "dip": 73,
+        "dip_direction": 334,
+        "px": 0,
+        "py": 22.306,
+        "pz": 1
+    },
+    {
+        "dip": 38,
+        "dip_direction": 68,
+        "px": 0,
+        "py": 22.32,
+        "pz": 1
+    },
+    {
+        "dip": 70,
+        "dip_direction": 330,
+        "px": 0,
+        "py": 25.264,
+        "pz": 1
+    },
+    {
+        "dip": 52,
+        "dip_direction": 15,
+        "px": 0,
+        "py": 26.181,
+        "pz": 1
+    },
+    {
+        "dip": 29,
+        "dip_direction": 66,
+        "px": 0,
+        "py": 23.796,
+        "pz": 1
+    },
+    {
+        "dip": 69,
+        "dip_direction": 328,
+        "px": 0,
+        "py": 27.584,
+        "pz": 1
+    },
+    {
+        "dip": 71,
+        "dip_direction": 325,
+        "px": 0,
+        "py": 28.744,
+        "pz": 1
+    }
+]
