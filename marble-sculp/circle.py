@@ -103,4 +103,4 @@ class Circle:
                 if temp_coord not in intersection_list:
                     intersection_list.append(temp_coord)
 
-        return Discontinuity(sort_points(intersection_list))
+        return Discontinuity(sort_points(intersection_list), self.normal)
