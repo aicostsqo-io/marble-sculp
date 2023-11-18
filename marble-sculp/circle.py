@@ -14,21 +14,32 @@ class Circle:
         self.faces = []
         self.vertices = [[0.0, 0.0, 0.0]]
         self.normal = [0, 0, 1]
-        theta_length = 2 * math.pi
 
-        for i in range(segment):
+        self._reset_rotation(two_ways)
+
+    def move(self, x: int, y: int, z: int):
+        new_vertices = []
+        for vertex in self.vertices:
+            new_vertices.append([vertex[0] + x, vertex[1] + y, vertex[2] + z])
+        self.vertices = new_vertices
+
+    def _reset_rotation(self, two_ways: bool = True):
+        self.faces = []
+        self.vertices = [[0.0, 0.0, 0.0]]
+        theta_length = 2 * math.pi
+        for i in range(self.segment):
             self.vertices.append(
                 [
-                    math.cos(i / segment * theta_length),
-                    math.sin(i / segment * theta_length),
+                    math.cos(i / self.segment * theta_length),
+                    math.sin(i / self.segment * theta_length),
                     0.0,
                 ]
             )
 
-        for i in range(1, segment):
+        for i in range(1, self.segment):
             self.faces.append([0, i, i + 1])
 
-        self.faces.append([0, segment, 1])
+        self.faces.append([0, self.segment, 1])
 
         if two_ways:
             temp_faces = []
@@ -37,13 +48,10 @@ class Circle:
 
             self.faces = self.faces + temp_faces
 
-    def move(self, x: int, y: int, z: int):
-        new_vertices = []
-        for vertex in self.vertices:
-            new_vertices.append([vertex[0] + x, vertex[1] + y, vertex[2] + z])
-        self.vertices = new_vertices
-
     def rotate(self, dip: int, dip_direction: int):
+        self._dip = dip
+        self._dip_direction = dip_direction
+
         deg_to_rad = math.pi / 180
         temp_vertices = copy.deepcopy(self.vertices)
         for ind, vertex in enumerate(self.vertices):
@@ -102,5 +110,7 @@ class Circle:
 
                 if temp_coord not in intersection_list:
                     intersection_list.append(temp_coord)
+
+        self._reset_rotation()
 
         return Discontinuity(sort_points(intersection_list), self.normal)
