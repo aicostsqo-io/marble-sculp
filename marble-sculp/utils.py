@@ -24,5 +24,17 @@ def sort_points(pts):
 
 def calculate_dip_and_dip_direction_from_unit_vec(unit_vector: List[int]):
     dip_disc = math.acos(unit_vector[2]) * (180 / math.pi)
-    dip_direction = math.atan2(unit_vector[0], unit_vector[1]) * (180 / math.pi)
+    dip_direction = math.atan2(unit_vector[1], unit_vector[0]) * (180 / math.pi)
+    # if dip_direction < 0:
+    #     dip_direction = math.atan2(unit_vector[0], unit_vector[1]) * (180 / math.pi)
     return [dip_disc / 2, dip_direction / 2]
+
+
+def normalize(arr, t_min=0, t_max=1):
+    norm_arr = []
+    diff = t_max - t_min
+    diff_arr = max(arr) - min(arr)
+    for i in arr:
+        temp = (((i - min(arr)) * diff) / diff_arr) + t_min
+        norm_arr.append(temp)
+    return norm_arr
