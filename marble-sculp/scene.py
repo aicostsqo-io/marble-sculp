@@ -22,7 +22,7 @@ class Scene:
 
         material = ""
         for ind in range(len(self.objects)):
-            material += f"newmtl Material.{ind}\nNs 360.000000\nKa 1.000000 1.000000 1.000000\nKd {random.randint(0, 1000000)/1000000} {random.randint(0, 1000000)/1000000} {random.randint(0, 1000000)/1000000}\nKs 0.500000 0.500000 0.500000\nKe 0.000000 0.000000 0.000000\nNi 1.450000\nd 1.000000\nillum 2\n\n"
+            material += f"newmtl Material.{ind}\nNs 360.000000\nKa 1.000000 1.000000 1.000000\nKd {random.randint(0, 1000000)/1000000} {random.randint(0, 1000000)/1000000} {random.randint(0, 1000000)/1000000}\nKs 0.500000 0.500000 0.500000\nKe 0.000000 0.000000 0.000000\nNs 0.000000\nd 1.000000\nillum 2\n\n"
 
         with open("./object.mtl", "w") as fp:
             fp.write(material)
@@ -52,16 +52,16 @@ marb.move(-0.5, -0.5, -0.5)
 circ = Circle()
 circ.move(0, 0, 0)
 # circ.rotate(60, 45)
-# circ.intersections([[0.5, -0.5, 0.5], [0.5, -0.5, -0.5]])
+# scene.add(circ.intersections(marb.edges, marb.vertices))
 # scene.add(circ)
 
 with open("./test.json", "r") as fp:
-    test_data = json.loads(fp.read())[0:1]
+    test_data = json.loads(fp.read())
 
 for i in test_data:
     circ.rotate(i["dip"], i["dip_direction"])
     disc = circ.intersections(marb.edges, marb.vertices)
-    for _ in range(6):
+    for _ in range(5):
         bae = disc.baecher(i["dip"], i["dip_direction"], 3, "log", 5, 4)
         bae_rot = calculate_dip_and_dip_direction_from_unit_vec(bae["unit_vector"])
         print(
@@ -72,9 +72,10 @@ for i in test_data:
         print(bae_rot)
         print("=====")
         scene.add(disc)
-        circ = Circle()
-        circ.rotate(bae_rot[0], bae_rot[1])
-        scene.add(circ)
+        # circ2 = Circle()
+        # circ2.rotate(bae_rot[0], bae_rot[1])
+        # scene.add(circ2)
+    print("*" * 15)
 
 scene.convert_obj()
 print("Execution Time:", time.time() - start)
