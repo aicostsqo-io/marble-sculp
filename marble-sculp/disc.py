@@ -1,6 +1,7 @@
 from typing import List
 import math
 import numpy as np
+from utils import normalize
 
 
 class Discontinuity:
@@ -44,7 +45,6 @@ class Discontinuity:
                 kapa = dip_direction + math.pi
             if dip_direction >= math.pi and dip_direction <= 2 * math.pi:
                 kapa = dip_direction - math.pi
-            print(kapa, "asda")
             pole_mean = [
                 math.cos(kapa) * math.cos(echis),
                 -math.sin(kapa) * math.cos(echis),
@@ -68,8 +68,10 @@ class Discontinuity:
             # rot_correct_unit_vec = np.dot(pole_mean, random_angle) / np.linalg.norm(
             #     np.dot(pole_mean, random_angle)
             # )
-            rot_correct_unit_vec = pole_mean / np.linalg.norm(random_angle)
-            pole_all_rotated = rot_correct_unit_vec * pole_dip_rotated
+            # rot_correct_unit_vec = pole_mean / np.linalg.norm(pole_mean)
+            rot_correct_unit_vec = normalize(np.dot(pole_mean, random_angle))
+            pole_all_rotated = np.cross(rot_correct_unit_vec, pole_dip_rotated)
+            print(pole_all_rotated)
 
         elif fisher_constant <= 0:
             random_dip = 90 * np.random.uniform()
