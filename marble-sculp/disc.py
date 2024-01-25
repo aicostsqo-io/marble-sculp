@@ -5,13 +5,22 @@ from utils import normalize
 
 
 class Discontinuity:
-    def __init__(self, vertices: List[List[int]], normal: List[int] = None):
+    def __init__(
+        self, vertices: List[List[int]], normal: List[int] = None, two_ways: bool = True
+    ):
         self.vertices = vertices
         self.faces = [[]]
         self.normal = normal
 
         for ind, value in enumerate(self.vertices):
             self.faces[0].append(ind)
+
+        if two_ways:
+            temp_faces = []
+            for face in self.faces:
+                temp_faces.append(list(reversed(face)))
+
+            self.faces = self.faces + temp_faces
 
     def baecher(
         self,
