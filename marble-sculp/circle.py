@@ -30,8 +30,8 @@ class Circle:
         for i in range(self.segment):
             self.vertices.append(
                 [
-                    math.cos(i / self.segment * theta_length),
-                    math.sin(i / self.segment * theta_length),
+                    math.cos(i / self.segment * theta_length) * self.radius,
+                    math.sin(i / self.segment * theta_length) * self.radius,
                     0.0,
                 ]
             )
@@ -111,6 +111,8 @@ class Circle:
                 if temp_coord not in intersection_list:
                     intersection_list.append(temp_coord)
 
+        if not intersection_list:
+            return None
         self._reset_rotation()
 
         return Discontinuity(sort_points(intersection_list), self.normal)
