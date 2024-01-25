@@ -1,21 +1,18 @@
-import matplotlib.pyplot as plt
-
-from plane import Plane
-from circle import Circle
+from typing import List
 
 
 class Marble:
-    def __init__(self, pos: list = [0, 0, 0]):
+    def __init__(self, size: List[int] = [1, 1, 1], pos: List[int] = [0, 0, 0]):
         self.type = "marble"
         self.vertices = [
             [0, 0, 0],  # A 0
-            [1, 0, 0],  # B 1
-            [1, 1, 0],  # C 2
-            [0, 1, 0],  # D 3
-            [0, 0, 1],  # E 4
-            [1, 0, 1],  # F 5
-            [1, 1, 1],  # G 6
-            [0, 1, 1],  # H 7
+            [size[0], 0, 0],  # B 1
+            [size[0], size[1], 0],  # C 2
+            [0, size[1], 0],  # D 3
+            [0, 0, size[2]],  # E 4
+            [size[0], 0, size[2]],  # F 5
+            [size[0], size[1], size[2]],  # G 6
+            [0, size[1], size[2]],  # H 7
         ]
         self.faces = [
             [0, 3, 2, 1],  # ADCB
@@ -32,7 +29,11 @@ class Marble:
             self.edges.append([face[2], face[3]])
             self.edges.append([face[3], face[0]])
 
-    def move(self, x: int, y: int, z: int):
+        self.move(-(size[0] / 2), -(size[1] / 2), -(size[2] / 2))
+        if pos[0] != 0 or pos[1] != 0 or pos[2] != 0:
+            self.move(pos[0], pos[1], pos[2])
+
+    def move(self, x: float, y: float, z: float):
         new_vertices = []
         for vertex in self.vertices:
             new_vertices.append([vertex[0] + x, vertex[1] + y, vertex[2] + z])
