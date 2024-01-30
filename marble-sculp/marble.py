@@ -33,6 +33,18 @@ class Marble:
         if pos[0] != 0 or pos[1] != 0 or pos[2] != 0:
             self.move(pos[0], pos[1], pos[2])
 
+    @staticmethod
+    def from_points(vertices: List[int], faces: List[int]):
+        mrb = Marble()
+        mrb.vertices = vertices
+        mrb.faces = faces
+        mrb.edges = []
+        for face in mrb.faces:
+            mrb.edges.append([face[0], face[1]])
+            mrb.edges.append([face[1], face[2]])
+            mrb.edges.append([face[2], face[0]])
+        return mrb
+
     def move(self, x: float, y: float, z: float):
         new_vertices = []
         for vertex in self.vertices:

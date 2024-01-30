@@ -17,6 +17,7 @@ class Scene:
         for ind, obj in enumerate(self.objects):
             index_map["vertices"][ind] = len(obj.vertices)
             # Vertices
+            data += f"o Marble{ind}\n"
             for vertex in obj.vertices:
                 data += f"v {vertex[0]} {vertex[1]} {vertex[2]}\n"
 
@@ -44,7 +45,68 @@ class Scene:
         return filename
 
 
-# start = time.time()
+if __name__ == "__main__":
+    import numpy as np
+    from scipy.spatial import ConvexHull
+
+    scene = Scene()
+    marb = Marble(size=(10, 10, 10))
+    objects = [marb]
+    temp_objects = []
+    # scene.add(marb)
+    circ = Circle(radius=15)
+
+    with open("./test.json", "r") as fp:
+        test_data = json.loads(fp.read())
+
+    processed = []
+    start = time.time()
+    for i in test_data[:]:
+        if [i["dip"], i["dip_direction"]] in processed:
+            continue
+        processed.append([i["dip"], i["dip_direction"]])
+        circ.rotate(i["dip"], i["dip_direction"])
+        for obj in objects:
+            disc = circ.intersections(obj.edges, obj.vertices)
+            if disc is None:
+                temp_objects.append(obj)
+                continue
+
+            left = [d for d in disc.vertices]
+            right = [d for d in disc.vertices]
+
+            for j in obj.vertices:
+                if np.dot(circ.normal, j) < 0:
+                    left.append(j)
+                else:
+                    right.append(j)
+
+            if len(left) > 3:
+                temp_objects.append(
+                    Marble.from_points(
+                        left, ConvexHull(left, qhull_options="QJ Pp").simplices
+                    )
+                )
+            if len(right) > 3:
+                temp_objects.append(
+                    Marble.from_points(
+                        right, ConvexHull(right, qhull_options="QJ Pp").simplices
+                    )
+                )
+        objects = temp_objects
+        temp_objects = []
+
+    # scene.add(circ)
+
+    for i in objects:
+        scene.add(i)
+
+    print(len(objects))
+
+    print("Execution Time:", time.time() - start)
+    scene.convert_obj("ibo")
+    print("Total Time:", time.time() - start)
+
 # scene = Scene()
 # marb = Marble()
 # marb.move(-0.5, -0.5, -0.5)

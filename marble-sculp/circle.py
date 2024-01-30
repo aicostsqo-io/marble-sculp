@@ -10,6 +10,7 @@ class Circle:
         self.type = "circle"
         self.radius = radius
         self.segment = segment
+        self.two_ways = two_ways
 
         self.faces = []
         self.vertices = [[0.0, 0.0, 0.0]]
@@ -49,6 +50,7 @@ class Circle:
             self.faces = self.faces + temp_faces
 
     def rotate(self, dip: int, dip_direction: int):
+        self._reset_rotation(self.two_ways)
         self._dip = dip
         self._dip_direction = dip_direction
 
