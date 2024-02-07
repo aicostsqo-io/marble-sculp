@@ -46,99 +46,100 @@ class Scene:
 
 
 if __name__ == "__main__":
-    import numpy as np
-    from scipy.spatial import ConvexHull
+    # import numpy as np
+    # from scipy.spatial import ConvexHull
 
-    scene = Scene()
-    marb = Marble(size=(10, 10, 10))
-    objects = [marb]
-    temp_objects = []
-    # scene.add(marb)
-    circ = Circle(radius=15)
+    # scene = Scene()
+    # marb = Marble(size=(10, 10, 10))
+    # objects = [marb]
+    # temp_objects = []
+    # # scene.add(marb)
+    # circ = Circle(radius=15)
 
-    with open("./test.json", "r") as fp:
-        test_data = json.loads(fp.read())
+    # with open("./test.json", "r") as fp:
+    #     test_data = json.loads(fp.read())
 
-    processed = []
+    # processed = []
+    # start = time.time()
+    # for i in test_data[:]:
+    #     if [i["dip"], i["dip_direction"]] in processed:
+    #         continue
+    #     processed.append([i["dip"], i["dip_direction"]])
+    #     circ.rotate(i["dip"], i["dip_direction"])
+    #     for obj in objects:
+    #         disc = circ.intersections(obj.edges, obj.vertices)
+    #         if disc is None:
+    #             temp_objects.append(obj)
+    #             continue
+
+    #         left = [d for d in disc.vertices]
+    #         right = [d for d in disc.vertices]
+
+    #         for j in obj.vertices:
+    #             if np.dot(circ.normal, j) < 0:
+    #                 left.append(j)
+    #             else:
+    #                 right.append(j)
+
+    #         if len(left) > 3:
+    #             temp_objects.append(
+    #                 Marble.from_points(
+    #                     left, ConvexHull(left, qhull_options="QJ Pp").simplices
+    #                 )
+    #             )
+    #         if len(right) > 3:
+    #             temp_objects.append(
+    #                 Marble.from_points(
+    #                     right, ConvexHull(right, qhull_options="QJ Pp").simplices
+    #                 )
+    #             )
+    #     objects = temp_objects
+    #     temp_objects = []
+
+    # # scene.add(circ)
+
+    # for i in objects:
+    #     scene.add(i)
+
+    # print(len(objects))
+
+    # print("Execution Time:", time.time() - start)
+    # scene.convert_obj("ibo")
+    # print("Total Time:", time.time() - start)
     start = time.time()
-    for i in test_data[:]:
-        if [i["dip"], i["dip_direction"]] in processed:
-            continue
-        processed.append([i["dip"], i["dip_direction"]])
-        circ.rotate(i["dip"], i["dip_direction"])
-        for obj in objects:
-            disc = circ.intersections(obj.edges, obj.vertices)
-            if disc is None:
-                temp_objects.append(obj)
-                continue
+    # scene = Scene()
+    # marb = Marble()
+    # # marb.move(-0.5, -0.5, -0.5)
+    # # scene.add(marb)
 
-            left = [d for d in disc.vertices]
-            right = [d for d in disc.vertices]
+    # circ = Circle()
+    # # circ.move(0, 0, 0)
+    # # circ.rotate(60, 45)
+    # # scene.add(circ.intersections(marb.edges, marb.vertices))
+    # # scene.add(circ)
 
-            for j in obj.vertices:
-                if np.dot(circ.normal, j) < 0:
-                    left.append(j)
-                else:
-                    right.append(j)
+    # with open("./test.json", "r") as fp:
+    #     test_data = json.loads(fp.read())
 
-            if len(left) > 3:
-                temp_objects.append(
-                    Marble.from_points(
-                        left, ConvexHull(left, qhull_options="QJ Pp").simplices
-                    )
-                )
-            if len(right) > 3:
-                temp_objects.append(
-                    Marble.from_points(
-                        right, ConvexHull(right, qhull_options="QJ Pp").simplices
-                    )
-                )
-        objects = temp_objects
-        temp_objects = []
+    # for i in test_data:
+    #     circ.rotate(i["dip"], i["dip_direction"])
+    #     disc = circ.intersections(marb.edges, marb.vertices)
+    #     # scene.add(disc)
+    #     for _ in range(5):
+    #         bae = disc.baecher(i["dip"], i["dip_direction"], 3, "log", 5, 4)
+    #         bae_rot = calculate_dip_and_dip_direction_from_unit_vec(bae["unit_vector"])
+    #         print(
+    #             i["dip"],
+    #             i["dip_direction"],
+    #             calculate_dip_and_dip_direction_from_unit_vec(disc.normal),
+    #         )
+    #         print(bae_rot)
+    #         print("=====")
+    #         circ2 = Circle()
+    #         circ2.rotate(bae_rot[0], bae_rot[1])
+    #         scene.add(circ2.intersections(marb.edges, marb.vertices))
+    #     print("*" * 15)
 
-    # scene.add(circ)
-
-    for i in objects:
-        scene.add(i)
-
-    print(len(objects))
-
-    print("Execution Time:", time.time() - start)
-    scene.convert_obj("ibo")
-    print("Total Time:", time.time() - start)
-
-# scene = Scene()
-# marb = Marble()
-# marb.move(-0.5, -0.5, -0.5)
-# # scene.add(marb)
-
-# circ = Circle()
-# circ.move(0, 0, 0)
-# # circ.rotate(60, 45)
-# # scene.add(circ.intersections(marb.edges, marb.vertices))
-# # scene.add(circ)
-
-# with open("./test.json", "r") as fp:
-#     test_data = json.loads(fp.read())
-
-# for i in test_data:
-#     circ.rotate(i["dip"], i["dip_direction"])
-#     disc = circ.intersections(marb.edges, marb.vertices)
-#     scene.add(disc)
-#     # for _ in range(5):
-#     #     bae = disc.baecher(i["dip"], i["dip_direction"], 3, "log", 5, 4)
-#     #     bae_rot = calculate_dip_and_dip_direction_from_unit_vec(bae["unit_vector"])
-#     #     print(
-#     #         i["dip"],
-#     #         i["dip_direction"],
-#     #         calculate_dip_and_dip_direction_from_unit_vec(disc.normal),
-#     #     )
-#     #     print(bae_rot)
-#     #     print("=====")
-#     #     # circ2 = Circle()
-#     #     # circ2.rotate(bae_rot[0], bae_rot[1])
-#     #     # scene.add(circ2)
-#     print("*" * 15)
-
-# scene.convert_obj("asds")
-# print("Execution Time:", time.time() - start)
+    # print(len(scene.objects))
+    # scene.convert_obj("asds")
+    # print("Execution Time:", time.time() - start)
