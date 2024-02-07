@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from scene import Scene
 from marble import Marble
 from circle import Circle
+from utils import calculate_dip_and_dip_direction_from_unit_vec
+from scipy.spatial import ConvexHull
 
 
 class Discontinous(TypedDict):
@@ -108,6 +110,36 @@ async def marble(request: Request, payload: DiscModel):
         {
             "obj": f"/static/disc/{payload.filename}.obj",
             "mtl": f"/static/disc/{payload.filename}.mtl",
+        }
+    )
+
+
+@app.post("/dfn")
+async def dfn(request: Request, payload: DiscModel):
+    scene = Scene()
+    marb = Marble(
+        size=[payload.sizeX, payload.sizeY, payload.sizeZ],
+        pos=[payload.positionX, payload.positionY, payload.positionZ],
+    )
+    circ = Circle()
+
+    for i in payload.data:
+        circ.rotate(i["dip"], i["dipDirection"])
+        circ.move(i["positionX"], i["positionY"], i["positionZ"])
+        disc = circ.intersections(marb.edges, marb.vertices)
+        for _ in range(5):
+            bae = disc.baecher(i["dip"], i["dipDirection"], 3, "log", 5, 4)
+            bae_rot = calculate_dip_and_dip_direction_from_unit_vec(bae["unit_vector"])
+            circ2 = Circle()
+            circ2.rotate(bae_rot[0], bae_rot[1])
+            scene.add(circ2.intersections(marb.edges, marb.vertices))
+
+    scene.convert_obj(filename="dfn/" + payload.filename)
+
+    return JSONResponse(
+        {
+            "obj": f"/static/dfn/{payload.filename}.obj",
+            "mtl": f"/static/dfn/{payload.filename}.mtl",
         }
     )
 
