@@ -11,14 +11,18 @@ class Circle:
         self.radius = radius
         self.segment = segment
         self.two_ways = two_ways
+        self.pos = [0.0, 0.0, 0.0]
+        self.constant = 0
 
         self.faces = []
-        self.vertices = [[0.0, 0.0, 0.0]]
+        self.vertices = [self.pos]
         self.normal = [0, 0, 1]
 
         self._reset_rotation(two_ways)
 
     def move(self, x: int, y: int, z: int):
+        self.pos = [x, y, z]
+        self.constant = -np.array(self.pos).dot(self.normal)
         new_vertices = []
         for vertex in self.vertices:
             new_vertices.append([vertex[0] + x, vertex[1] + y, vertex[2] + z])
@@ -36,6 +40,8 @@ class Circle:
                     0.0,
                 ]
             )
+
+        self.move(self.pos[0], self.pos[1], self.pos[2])
 
         for i in range(1, self.segment):
             self.faces.append([0, i, i + 1])
@@ -94,15 +100,22 @@ class Circle:
         lines = [[vertices[i[0]], vertices[i[1]]] for i in edges]
         intersection_list = []
         for line in lines:
-            start_sign = np.array(self.normal).dot(line[0])
-            end_sign = np.array(self.normal).dot(line[1])
+            start_sign = np.array(self.normal).dot(line[0]) + self.constant
+            end_sign = np.array(self.normal).dot(line[1]) + self.constant
             # print(start_sign, end_sign)
             if (start_sign < 0 and end_sign > 0) or (end_sign < 0 and start_sign > 0):
-                direction = np.array(line[0]) - np.array(line[1])
+                direction = np.array(line[1]) - np.array(line[0])
                 denominator = np.array(self.normal).dot(direction)
                 # print(denominator)
+                # print((np.array(line[0]).dot(self.normal) + self.constant))
+                # print("===")
 
-                t = -(np.array(line[0]).dot(self.normal)) / denominator
+                t = -(np.array(line[0]).dot(self.normal) + self.constant) / denominator
+                # print(t)
+
+                if t < 0 or t > 1:
+                    print(t)
+                    continue
 
                 # print(line[0], direction, t)
                 temp_coord = [line[0][0], line[0][1], line[0][2]]
@@ -115,6 +128,6 @@ class Circle:
 
         if not intersection_list:
             return None
-        self._reset_rotation()
+        # self._reset_rotation()
 
         return Discontinuity(sort_points(intersection_list), self.normal)

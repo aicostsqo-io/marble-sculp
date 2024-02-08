@@ -152,26 +152,31 @@ async def poly(request: Request, payload: DiscModel):
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],
         pos=[payload.positionX, payload.positionY, payload.positionZ],
     )
-    circ = Circle()
-
+    temp_objects = []
     objects = [marb]
     processed = []
     for i in payload.data:
         if [i["dip"], i["dipDirection"]] in processed:
             continue
         processed.append([i["dip"], i["dipDirection"]])
+        circ = Circle(radius=15)
+        circ.move(i["positionX"], i["positionY"], i["positionZ"])
         circ.rotate(i["dip"], i["dipDirection"])
+        # scene.add(circ)
         for obj in objects:
             disc = circ.intersections(obj.edges, obj.vertices)
             if disc is None:
                 temp_objects.append(obj)
                 continue
 
+            # scene.add(disc)
+
             left = [d for d in disc.vertices]
             right = [d for d in disc.vertices]
 
             for j in obj.vertices:
-                if np.dot(circ.normal, j) < 0:
+
+                if np.dot(disc.normal, np.array(j) - disc.normal) < 0:
                     left.append(j)
                 else:
                     right.append(j)
@@ -182,12 +187,15 @@ async def poly(request: Request, payload: DiscModel):
                         left, ConvexHull(left, qhull_options="QJ Pp").simplices
                     )
                 )
+
+                # pass
             if len(right) > 3:
                 temp_objects.append(
                     Marble.from_points(
                         right, ConvexHull(right, qhull_options="QJ Pp").simplices
                     )
                 )
+                # pass
         objects = temp_objects
         temp_objects = []
 

@@ -10,7 +10,13 @@ def calculate_normal_plane(A: List[int], B: List[int], C: List[int]) -> List[int
     AB = B - A
     AC = C - A
 
-    return np.cross(AB, AC)
+    direction = np.cross(AB, AC)
+    length = (
+        direction[0] * direction[0]
+        + direction[1] * direction[1]
+        + direction[2] * direction[2]
+    )
+    return direction / np.sqrt(length)
 
 
 def sort_points(pts):

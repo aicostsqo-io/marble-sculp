@@ -1,6 +1,6 @@
 from marble import Marble
 from circle import Circle
-import json, time, random, uuid
+import json, time, random, uuid, copy
 from utils import calculate_dip_and_dip_direction_from_unit_vec
 
 
@@ -9,7 +9,7 @@ class Scene:
         self.objects = []
 
     def add(self, _object):
-        self.objects.append(_object)
+        self.objects.append(copy.deepcopy(_object))
 
     def convert_obj(self, filename: str) -> str:
         data = "mtllib object.mtl\n"
@@ -107,14 +107,16 @@ if __name__ == "__main__":
     # scene.convert_obj("ibo")
     # print("Total Time:", time.time() - start)
     start = time.time()
-    # scene = Scene()
+    scene = Scene()
+
     # marb = Marble()
     # # marb.move(-0.5, -0.5, -0.5)
     # # scene.add(marb)
 
-    # circ = Circle()
+    circ = Circle()
     # # circ.move(0, 0, 0)
-    # # circ.rotate(60, 45)
+    circ.rotate(0, 80)
+    scene.add(circ)
     # # scene.add(circ.intersections(marb.edges, marb.vertices))
     # # scene.add(circ)
 
@@ -141,5 +143,5 @@ if __name__ == "__main__":
     #     print("*" * 15)
 
     # print(len(scene.objects))
-    # scene.convert_obj("asds")
+    scene.convert_obj("asds")
     # print("Execution Time:", time.time() - start)
