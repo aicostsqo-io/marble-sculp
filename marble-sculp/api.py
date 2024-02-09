@@ -2,46 +2,16 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from typing import List
-from typing_extensions import TypedDict
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from scipy.spatial import ConvexHull
 import numpy as np
+from pprint import pprint
 
 from scene import Scene
 from marble import Marble
 from circle import Circle
+from models import *
 from utils import calculate_dip_and_dip_direction_from_unit_vec
-
-
-class Discontinous(TypedDict):
-    dip: int
-    dipDirection: int
-    positionX: float
-    positionY: float
-    positionZ: float
-
-
-class DiscModel(BaseModel):
-    filename: str
-    positionX: float
-    positionY: float
-    positionZ: float
-    sizeX: int
-    sizeY: int
-    sizeZ: int
-    data: List[Discontinous]
-
-
-class RPModel(BaseModel):
-    filename: str
-    positionX: float
-    positionY: float
-    positionZ: float
-    sizeX: int
-    sizeY: int
-    sizeZ: int
 
 
 app = FastAPI()
@@ -152,55 +122,11 @@ async def poly(request: Request, payload: DiscModel):
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],
         pos=[payload.positionX, payload.positionY, payload.positionZ],
     )
-    temp_objects = []
-    objects = [marb]
-    processed = []
-    for i in payload.data:
-        if [i["dip"], i["dipDirection"]] in processed:
-            continue
-        processed.append([i["dip"], i["dipDirection"]])
-        circ = Circle(radius=15)
-        circ.move(i["positionX"], i["positionY"], i["positionZ"])
-        circ.rotate(i["dip"], i["dipDirection"])
-        # scene.add(circ)
-        for obj in objects:
-            disc = circ.intersections(obj.edges, obj.vertices)
-            if disc is None:
-                temp_objects.append(obj)
-                continue
-
-            # scene.add(disc)
-
-            left = [d for d in disc.vertices]
-            right = [d for d in disc.vertices]
-
-            for j in obj.vertices:
-
-                if np.dot(disc.normal, np.array(j) - disc.normal) < 0:
-                    left.append(j)
-                else:
-                    right.append(j)
-
-            if len(left) > 3:
-                temp_objects.append(
-                    Marble.from_points(
-                        left, ConvexHull(left, qhull_options="QJ Pp").simplices
-                    )
-                )
-
-                # pass
-            if len(right) > 3:
-                temp_objects.append(
-                    Marble.from_points(
-                        right, ConvexHull(right, qhull_options="QJ Pp").simplices
-                    )
-                )
-                # pass
-        objects = temp_objects
-        temp_objects = []
-
-    for i in objects:
-        scene.add(i)
+    scene.polyhedron(
+        size=[payload.sizeX, payload.sizeY, payload.sizeZ],
+        pos=[payload.positionX, payload.positionY, payload.positionZ],
+        data=payload.data,
+    )
 
     scene.convert_obj(filename="poly/" + payload.filename)
 
@@ -208,6 +134,61 @@ async def poly(request: Request, payload: DiscModel):
         {
             "obj": f"/static/poly/{payload.filename}.obj",
             "mtl": f"/static/poly/{payload.filename}.mtl",
+        }
+    )
+
+
+@app.post("/extend")
+async def extend(request: Request, payload: DiscModel):
+    scene = Scene()
+    marb = Marble(
+        size=[payload.sizeX, payload.sizeY, payload.sizeZ],
+        pos=[payload.positionX, payload.positionY, payload.positionZ],
+    )
+
+    discons = []
+
+    for u in range(1, 5):
+        for i in range(-1 * u, 2 * u - (u - 1)):
+            for j in range(-1 * u, 2 * u - (u - 1)):
+                # if i == 0 and j == 0:
+                #     continue
+                for discon in payload.data:
+
+                    temp_circ = Circle(radius=10)
+                    temp_circ.move(
+                        i * marb.size[0] + marb.pos[0] + discon["positionX"],
+                        marb.pos[1] + discon["positionY"],
+                        j * marb.size[2] + marb.pos[2] + discon["positionZ"],
+                    )
+                    temp_circ.rotate(discon["dip"], discon["dipDirection"])
+                    print(temp_circ.normal)
+                    # TODO: Use disc pos too when moving
+                    disc = temp_circ.intersections(marb.edges, marb.vertices)
+                    if disc:
+                        # scene.add(temp_circ)
+                        scene.add(disc)
+                        discon["positionX"] = temp_circ.pos[0]
+                        discon["positionY"] = temp_circ.pos[1]
+                        discon["positionZ"] = temp_circ.pos[2]
+                        discons.append(discon)
+
+    print("Total Dics:", len(discons))
+
+    # print(discons)
+
+    # scene.polyhedron(
+    #     size=[payload.sizeX, payload.sizeY, payload.sizeZ],
+    #     pos=[payload.positionX, payload.positionY, payload.positionZ],
+    #     data=discons,
+    # )
+
+    scene.convert_obj(filename="extend/" + payload.filename)
+
+    return JSONResponse(
+        {
+            "obj": f"/static/extend/{payload.filename}.obj",
+            "mtl": f"/static/extend/{payload.filename}.mtl",
         }
     )
 

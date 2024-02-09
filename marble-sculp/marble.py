@@ -4,6 +4,8 @@ from typing import List
 class Marble:
     def __init__(self, size: List[int] = [1, 1, 1], pos: List[int] = [0, 0, 0]):
         self.type = "marble"
+        self.size = size
+        self.pos = pos
         self.vertices = [
             [0, 0, 0],  # A 0
             [size[0], 0, 0],  # B 1
@@ -46,6 +48,7 @@ class Marble:
         return mrb
 
     def move(self, x: float, y: float, z: float):
+        self.pos = [x, y, z]
         new_vertices = []
         for vertex in self.vertices:
             new_vertices.append([vertex[0] + x, vertex[1] + y, vertex[2] + z])

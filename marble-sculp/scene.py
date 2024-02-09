@@ -1,6 +1,11 @@
 from marble import Marble
 from circle import Circle
 import json, time, random, uuid, copy
+from typing import List
+from scipy.spatial import ConvexHull
+import numpy as np
+
+from models import Discontinous
 from utils import calculate_dip_and_dip_direction_from_unit_vec
 
 
@@ -43,6 +48,77 @@ class Scene:
         with open(f"./static/{filename}.obj", "w") as fp:
             fp.write(data)
         return filename
+
+    def polyhedron(self, size: List[int], pos: List[int], data: List[Discontinous]):
+        marb = Marble(
+            size=size,
+            pos=pos,
+        )
+        temp_objects = []
+        objects = [marb]
+        processed = []
+        for i in data:
+            if [
+                i["dip"],
+                i["dipDirection"],
+                round(i["positionX"], 5),
+                round(i["positionY"], 5),
+                round(i["positionZ"], 5),
+            ] in processed:
+                continue
+            processed.append(
+                [
+                    i["dip"],
+                    i["dipDirection"],
+                    round(i["positionX"], 5),
+                    round(i["positionY"], 5),
+                    round(i["positionZ"], 5),
+                ]
+            )
+            circ = Circle(radius=15)
+            circ.move(i["positionX"], i["positionY"], i["positionZ"])
+            circ.rotate(i["dip"], i["dipDirection"])
+            # scene.add(circ)
+            for obj in objects:
+                disc = circ.intersections(obj.edges, obj.vertices)
+                if disc is None:
+                    temp_objects.append(obj)
+                    continue
+
+                # self.add(disc)
+
+                left = [d for d in disc.vertices]
+                right = [d for d in disc.vertices]
+
+                for j in obj.vertices:
+
+                    if np.dot(disc.normal, np.array(j) - disc.normal) < 0:
+                        left.append(j)
+                    else:
+                        right.append(j)
+
+                if len(left) > 3:
+                    temp_objects.append(
+                        Marble.from_points(
+                            left, ConvexHull(left, qhull_options="QJ Pp").simplices
+                        )
+                    )
+
+                    # pass
+                if len(right) > 3:
+                    temp_objects.append(
+                        Marble.from_points(
+                            right, ConvexHull(right, qhull_options="QJ Pp").simplices
+                        )
+                    )
+                    # pass
+            objects = temp_objects
+            temp_objects = []
+
+        for i in objects:
+            self.add(i)
+
+        print(len(objects))
 
 
 if __name__ == "__main__":
