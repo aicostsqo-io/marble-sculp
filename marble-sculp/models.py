@@ -16,9 +16,9 @@ class DiscModel(BaseModel):
     positionX: float
     positionY: float
     positionZ: float
-    sizeX: int
-    sizeY: int
-    sizeZ: int
+    sizeX: float
+    sizeY: float
+    sizeZ: float
     data: List[Discontinous]
 
 
@@ -27,18 +27,18 @@ class RPModel(BaseModel):
     positionX: float
     positionY: float
     positionZ: float
-    sizeX: int
-    sizeY: int
-    sizeZ: int
+    sizeX: float
+    sizeY: float
+    sizeZ: float
 
 
 class SiteModel(BaseModel):
     positionX: float
     positionY: float
     positionZ: float
-    sizeX: int
-    sizeY: int
-    sizeZ: int
+    sizeX: float
+    sizeY: float
+    sizeZ: float
 
 
 class SiteModel(BaseModel):
