@@ -30,3 +30,17 @@ class RPModel(BaseModel):
     sizeX: int
     sizeY: int
     sizeZ: int
+
+
+class SiteModel(BaseModel):
+    positionX: float
+    positionY: float
+    positionZ: float
+    sizeX: int
+    sizeY: int
+    sizeZ: int
+
+
+class SiteModel(BaseModel):
+    filename: str
+    data: List[SiteModel]

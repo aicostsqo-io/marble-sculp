@@ -32,6 +32,26 @@ async def test(request: Request):
     return request.client.host
 
 
+@app.post("/site")
+async def site(request: Request, payload: SiteModel):
+    scene = Scene()
+    for i in payload.data:
+        marb = Marble(
+            size=[i.sizeX, i.sizeY, i.sizeZ],
+            pos=[i.positionX, i.positionY, i.positionZ],
+        )
+        scene.add(marb)
+
+    scene.convert_obj(filename="site/" + payload.filename)
+
+    return JSONResponse(
+        {
+            "obj": f"/static/site/{payload.filename}.obj",
+            "mtl": f"/static/site/{payload.filename}.mtl",
+        }
+    )
+
+
 @app.post("/rp")
 async def rp(request: Request, payload: RPModel):
     scene = Scene()
