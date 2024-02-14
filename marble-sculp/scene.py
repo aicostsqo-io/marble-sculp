@@ -58,41 +58,45 @@ class Scene:
         objects = [marb]
         processed = []
         for i in data:
-            if [
-                i["dip"],
-                i["dipDirection"],
-                round(i["positionX"], 5),
-                round(i["positionY"], 5),
-                round(i["positionZ"], 5),
-            ] in processed:
-                continue
-            processed.append(
-                [
-                    i["dip"],
-                    i["dipDirection"],
-                    round(i["positionX"], 5),
-                    round(i["positionY"], 5),
-                    round(i["positionZ"], 5),
-                ]
-            )
+            print(i["positionX"], i["positionY"], i["positionZ"])
+            # if [
+            #     i["dip"],
+            #     i["dipDirection"],
+            #     round(i["positionX"], 5),
+            #     round(i["positionY"], 5),
+            #     round(i["positionZ"], 5),
+            # ] in processed:
+            #     continue
+            # processed.append(
+            #     [
+            #         i["dip"],
+            #         i["dipDirection"],
+            #         round(i["positionX"], 5),
+            #         round(i["positionY"], 5),
+            #         round(i["positionZ"], 5),
+            #     ]
+            # )
             circ = Circle(radius=15)
-            circ.move(i["positionX"], i["positionY"], i["positionZ"])
             circ.rotate(i["dip"], i["dipDirection"])
-            # scene.add(circ)
+            circ.move(i["positionX"], i["positionY"], i["positionZ"])
+            # self.add(circ)
             for obj in objects:
                 disc = circ.intersections(obj.edges, obj.vertices)
                 if disc is None:
+                    # print("None")
                     temp_objects.append(obj)
                     continue
 
-                # self.add(disc)
+                self.add(disc)
 
                 left = [d for d in disc.vertices]
                 right = [d for d in disc.vertices]
 
                 for j in obj.vertices:
+                    # print(np.dot(disc.normal, np.array(j) - disc.normal))
+                    # print(np.dot(disc.normal, np.array(j)) + circ.constant)
 
-                    if np.dot(disc.normal, np.array(j) - disc.normal) < 0:
+                    if np.dot(disc.normal, np.array(j)) + circ.constant < 0:
                         left.append(j)
                     else:
                         right.append(j)

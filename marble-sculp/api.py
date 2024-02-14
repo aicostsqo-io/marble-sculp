@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from scipy.spatial import ConvexHull
 import numpy as np
 from pprint import pprint
+from copy import deepcopy
 
 from scene import Scene
 from marble import Marble
@@ -80,7 +81,6 @@ async def marble(request: Request, payload: DiscModel):
     )
     # scene.add(marb)
 
-    circ = Circle(radius=5)
     # circ.move(0, 0, 5)
     # scene.add(circ)
     # circ.rotate(430, 0)
@@ -88,6 +88,7 @@ async def marble(request: Request, payload: DiscModel):
     # scene.add(disc)
 
     for i in payload.data:
+        circ = Circle(radius=5)
         circ.rotate(i["dip"], i["dipDirection"])
         circ.move(i["positionX"], i["positionY"], i["positionZ"])
         # scene.add(circ)
@@ -115,6 +116,7 @@ async def dfn(request: Request, payload: DiscModel):
     circ = Circle()
 
     for i in payload.data:
+        circ = Circle()
         circ.rotate(i["dip"], i["dipDirection"])
         circ.move(i["positionX"], i["positionY"], i["positionZ"])
         disc = circ.intersections(marb.edges, marb.vertices)
@@ -165,43 +167,51 @@ async def extend(request: Request, payload: DiscModel):
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],
         pos=[payload.positionX, payload.positionY, payload.positionZ],
     )
+    # scene.add(marb)
 
     discons = []
 
-    for u in range(1, 5):
+    for u in range(1, 2):
         for i in range(-1 * u, 2 * u - (u - 1)):
             for j in range(-1 * u, 2 * u - (u - 1)):
+                print("I:", i, "J:", j)
                 # if i == 0 and j == 0:
                 #     continue
-                for discon in payload.data:
+                for k in range(len(payload.data)):
+                    discon = deepcopy(payload.data[k])
 
                     temp_circ = Circle(radius=10)
-                    temp_circ.move(
-                        i * marb.size[0] + marb.pos[0] + discon["positionX"],
-                        marb.pos[1] + discon["positionY"],
-                        j * marb.size[2] + marb.pos[2] + discon["positionZ"],
-                    )
                     temp_circ.rotate(discon["dip"], discon["dipDirection"])
-                    print(temp_circ.normal)
+                    temp_circ.move(
+                        i * payload.sizeX + payload.positionX + discon["positionX"],
+                        payload.positionY + discon["positionY"],
+                        j * payload.sizeZ + payload.positionZ + discon["positionZ"],
+                    )
+                    # scene.add(temp_circ)
+                    # print(temp_circ.normal)
                     # TODO: Use disc pos too when moving
                     disc = temp_circ.intersections(marb.edges, marb.vertices)
                     if disc:
                         # scene.add(temp_circ)
-                        scene.add(disc)
-                        discon["positionX"] = temp_circ.pos[0]
-                        discon["positionY"] = temp_circ.pos[1]
-                        discon["positionZ"] = temp_circ.pos[2]
+                        # scene.add(disc)
+                        discon["positionX"] = (
+                            i * payload.sizeX + payload.positionX + discon["positionX"]
+                        )
+                        discon["positionY"] = payload.positionY + discon["positionY"]
+                        discon["positionZ"] = (
+                            j * payload.sizeZ + payload.positionZ + discon["positionZ"]
+                        )
                         discons.append(discon)
 
     print("Total Dics:", len(discons))
 
     # print(discons)
 
-    # scene.polyhedron(
-    #     size=[payload.sizeX, payload.sizeY, payload.sizeZ],
-    #     pos=[payload.positionX, payload.positionY, payload.positionZ],
-    #     data=discons,
-    # )
+    scene.polyhedron(
+        size=[payload.sizeX, payload.sizeY, payload.sizeZ],
+        pos=[payload.positionX, payload.positionY, payload.positionZ],
+        data=discons,
+    )
 
     scene.convert_obj(filename="extend/" + payload.filename)
 

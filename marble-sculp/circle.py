@@ -114,7 +114,7 @@ class Circle:
                 # print(t)
 
                 if t < 0 or t > 1:
-                    print(t)
+                    # print(t)
                     continue
 
                 # print(line[0], direction, t)
