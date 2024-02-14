@@ -30,6 +30,6 @@ jobs:
         pip install -r requirements.txt
     - name: Run Marble Sculp
       run: |
-        mkdir ./marble-sculp/static/{dfn,disc,extend,poly,rp,site}
+        mkdir -p ./marble-sculp/static/{dfn,disc,extend,poly,rp,site}
         pm2 restart marbleSculp
         
