@@ -30,4 +30,5 @@ jobs:
         pip install -r requirements.txt
     - name: Run Marble Sculp
       run: |
+        touch deneme.txt
         
