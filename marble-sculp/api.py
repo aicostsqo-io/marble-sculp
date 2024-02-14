@@ -224,4 +224,4 @@ async def extend(request: Request, payload: DiscModel):
 
 
 if __name__ == "__main__":
-    uvicorn.run("api:app", reload=True)
+    uvicorn.run("api:app", reload=True, workers=5)
