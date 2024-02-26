@@ -11,9 +11,17 @@ class Discontinuity:
         self.vertices = vertices
         self.faces = [[]]
         self.normal = normal
+        self.pos = [0.0, 0.0, 0.0]
 
         for ind, value in enumerate(self.vertices):
             self.faces[0].append(ind)
+            self.pos[0] += value[0]
+            self.pos[1] += value[1]
+            self.pos[2] += value[2]
+
+        self.pos[0] /= len(self.vertices)
+        self.pos[1] /= len(self.vertices)
+        self.pos[2] /= len(self.vertices)
 
         if two_ways:
             temp_faces = []
