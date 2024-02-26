@@ -215,6 +215,7 @@ async def dfn(request: Request, payload: DiscModel):
 
 @app.post("/poly")
 async def poly(request: Request, payload: DiscModel):
+    # scene = Scene(db=app.db, filename=payload.filename)
     scene = Scene()
     marb = Marble(
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],

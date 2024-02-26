@@ -6,6 +6,7 @@ class Marble:
         self.type = "marble"
         self.size = size
         self.pos = pos
+        self.volume = size[0] * size[1] * size[2]
         self.vertices = [
             [0, 0, 0],  # A 0
             [size[0], 0, 0],  # B 1
@@ -36,8 +37,9 @@ class Marble:
             self.move(pos[0], pos[1], pos[2])
 
     @staticmethod
-    def from_points(vertices: List[int], faces: List[int]):
+    def from_points(vertices: List[int], faces: List[int], volume: float = 0):
         mrb = Marble()
+        mrb.volume = volume
         mrb.vertices = vertices
         mrb.faces = faces
         mrb.edges = []

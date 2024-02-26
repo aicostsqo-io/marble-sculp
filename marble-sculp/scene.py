@@ -4,14 +4,19 @@ import json, time, random, uuid, copy
 from typing import List
 from scipy.spatial import ConvexHull
 import numpy as np
+from bson.objectid import ObjectId
+from datetime import datetime
+from random import uniform
 
 from models import Discontinous
 from utils import calculate_dip_and_dip_direction_from_unit_vec
 
 
 class Scene:
-    def __init__(self):
+    def __init__(self, db=None, filename=None):
         self.objects = []
+        self.db = db
+        self.filename = filename
 
     def add(self, _object):
         self.objects.append(copy.deepcopy(_object))
@@ -102,25 +107,61 @@ class Scene:
                         right.append(j)
 
                 if len(left) > 3:
+                    ql = ConvexHull(left, qhull_options="QJ Pp")
                     temp_objects.append(
-                        Marble.from_points(
-                            left, ConvexHull(left, qhull_options="QJ Pp").simplices
-                        )
+                        Marble.from_points(left, ql.simplices, ql.volume)
                     )
 
                     # pass
                 if len(right) > 3:
+                    qr = ConvexHull(right, qhull_options="QJ Pp")
                     temp_objects.append(
-                        Marble.from_points(
-                            right, ConvexHull(right, qhull_options="QJ Pp").simplices
-                        )
+                        Marble.from_points(right, qr.simplices, qr.volume)
                     )
                     # pass
             objects = temp_objects
             temp_objects = []
 
-        for i in objects:
+        for q, i in enumerate(objects):
             self.add(i)
+            if self.db is not None:
+                self.db["outputpolyhedrons"].insert_one(
+                    {
+                        "rpId": ObjectId(self.filename),
+                        "polyhedronId": q + 1,
+                        "volumeTheoric": i.volume,
+                        "vertexCount": len(i.vertices),
+                        "faceCount": len(i.faces),
+                        "volumeQuarry": uniform(0, i.volume),
+                        "createdAt": datetime.now(),
+                        "updatedAt": datetime.now(),
+                    }
+                )
+                for vq, vertex in enumerate(i.vertices):
+                    self.db["outputvertex"].insert_one(
+                        {
+                            "rpId": ObjectId(self.filename),
+                            "polyhedronId": q + 1,
+                            "vertexId": vq + 1,
+                            "x": vertex[0],
+                            "y": vertex[1],
+                            "z": vertex[2],
+                            "createdAt": datetime.now(),
+                            "updatedAt": datetime.now(),
+                        }
+                    )
+
+                for fq, face in enumerate(i.faces):
+                    self.db["outputfaces"].insert_one(
+                        {
+                            "rpId": ObjectId(self.filename),
+                            "polyhedronId": q + 1,
+                            "faceId": fq + 1,
+                            "vertexes": face.tolist(),
+                            "createdAt": datetime.now(),
+                            "updatedAt": datetime.now(),
+                        }
+                    )
 
         print(len(objects), len(processed))
 
