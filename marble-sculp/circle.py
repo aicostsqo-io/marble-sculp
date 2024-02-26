@@ -100,12 +100,29 @@ class Circle:
         lines = [[vertices[i[0]], vertices[i[1]]] for i in edges]
         intersection_list = []
         for line in lines:
-            start_sign = np.array(self.normal).dot(line[0]) + self.constant
-            end_sign = np.array(self.normal).dot(line[1]) + self.constant
+            start_sign = (
+                self.normal[0] * line[0][0]
+                + self.normal[1] * line[0][1]
+                + self.normal[2] * line[0][2]
+                + self.constant
+            )
+            # start_sign = np.array(self.normal).dot(line[0]) + self.constant
+            end_sign = (
+                self.normal[0] * line[1][0]
+                + self.normal[1] * line[1][1]
+                + self.normal[2] * line[1][2]
+                + self.constant
+            )
+            # end_sign = np.array(self.normal).dot(line[1]) + self.constant
             # print(start_sign, end_sign)
             if (start_sign < 0 and end_sign > 0) or (end_sign < 0 and start_sign > 0):
                 direction = np.array(line[1]) - np.array(line[0])
-                denominator = np.array(self.normal).dot(direction)
+                # denominator = np.array(self.normal).dot(direction)
+                denominator = (
+                    self.normal[0] * direction[0]
+                    + self.normal[1] * direction[1]
+                    + self.normal[2] * direction[2]
+                )
                 # print(denominator)
                 # print((np.array(line[0]).dot(self.normal) + self.constant))
                 # print("===")
