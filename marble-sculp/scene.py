@@ -58,7 +58,7 @@ class Scene:
         objects = [marb]
         processed = []
         for i in data:
-            print(i["positionX"], i["positionY"], i["positionZ"])
+            # print(i["positionX"], i["positionY"], i["positionZ"])
             # if [
             #     i["dip"],
             #     i["dipDirection"],
@@ -76,7 +76,7 @@ class Scene:
             #         round(i["positionZ"], 5),
             #     ]
             # )
-            circ = Circle(radius=15)
+            circ = Circle(radius=10)
             circ.rotate(i["dip"], i["dipDirection"])
             circ.move(i["positionX"], i["positionY"], i["positionZ"])
             # self.add(circ)
@@ -87,7 +87,7 @@ class Scene:
                     temp_objects.append(obj)
                     continue
 
-                self.add(disc)
+                # self.add(disc)
 
                 left = [d for d in disc.vertices]
                 right = [d for d in disc.vertices]
@@ -122,7 +122,7 @@ class Scene:
         for i in objects:
             self.add(i)
 
-        print(len(objects))
+        print(len(objects), len(processed))
 
 
 if __name__ == "__main__":

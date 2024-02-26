@@ -176,42 +176,70 @@ async def extend(request: Request, payload: DiscModel):
     # scene.add(marb)
 
     discons = []
+    a = 0
+    processed = []
 
     for u in range(1, 2):
         for i in range(-1 * u, 2 * u - (u - 1)):
             for j in range(-1 * u, 2 * u - (u - 1)):
-                print("I:", i, "J:", j)
-                # if i == 0 and j == 0:
-                #     continue
-                for k in range(len(payload.data)):
-                    discon = deepcopy(payload.data[k])
+                for k in range(-1 * u, 2 * u - (u - 1)):
+                    print("I:", i, "J:", j)
+                    a += 1
+                    # if i == 0 and j == 0:
+                    #     continue
+                    for d in range(len(payload.data)):
+                        discon = deepcopy(payload.data[d])
 
-                    temp_circ = Circle(radius=10)
-                    temp_circ.rotate(discon["dip"], discon["dipDirection"])
-                    temp_circ.move(
-                        i * payload.sizeX + payload.positionX + discon["positionX"],
-                        payload.positionY + discon["positionY"],
-                        j * payload.sizeZ + payload.positionZ + discon["positionZ"],
-                    )
-                    # scene.add(temp_circ)
-                    # print(temp_circ.normal)
-                    # TODO: Use disc pos too when moving
-                    disc = temp_circ.intersections(marb.edges, marb.vertices)
-                    if disc:
+                        temp_circ = Circle(radius=10)
+                        temp_circ.rotate(discon["dip"], discon["dipDirection"])
+                        temp_circ.move(
+                            i * payload.sizeX + payload.positionX + discon["positionX"],
+                            j * payload.sizeY + payload.positionY + discon["positionY"],
+                            k * payload.sizeZ + payload.positionZ + discon["positionZ"],
+                        )
                         # scene.add(temp_circ)
-                        # scene.add(disc)
-                        discon["positionX"] = (
-                            i * payload.sizeX + payload.positionX + discon["positionX"]
-                        )
-                        discon["positionY"] = payload.positionY + discon["positionY"]
-                        discon["positionZ"] = (
-                            j * payload.sizeZ + payload.positionZ + discon["positionZ"]
-                        )
-                        discons.append(discon)
+                        # print(temp_circ.normal)
+                        # TODO: Use disc pos too when moving
+                        disc = temp_circ.intersections(marb.edges, marb.vertices)
+                        if disc:
+                            if [
+                                round(disc.pos[0], 5),
+                                round(disc.pos[1], 5),
+                                round(disc.pos[2], 5),
+                            ] in processed:
+                                continue
+                            processed.append(
+                                [
+                                    round(disc.pos[0], 5),
+                                    round(disc.pos[1], 5),
+                                    round(disc.pos[2], 5),
+                                ]
+                            )
+                            # scene.add(temp_circ)
+                            # scene.add(disc)
 
-    print("Total Dics:", len(discons))
+                            discon["positionX"] = (
+                                i * payload.sizeX
+                                + payload.positionX
+                                + discon["positionX"]
+                            )
+                            discon["positionY"] = (
+                                j * payload.sizeY
+                                + payload.positionY
+                                + discon["positionY"]
+                            )
+                            discon["positionZ"] = (
+                                k * payload.sizeZ
+                                + payload.positionZ
+                                + discon["positionZ"]
+                            )
+                            discons.append(discon)
+
+    print("Total Dics:", len(discons), a)
 
     # print(discons)
+    # for i in processed:
+    #     print(i)
 
     scene.polyhedron(
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],
