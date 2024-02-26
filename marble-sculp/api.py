@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
-import uvicorn
+import uvicorn, time
 from fastapi.middleware.cors import CORSMiddleware
 from scipy.spatial import ConvexHull
 import numpy as np
 from pprint import pprint
 from copy import deepcopy
+from random import randint
 
 from scene import Scene
 from marble import Marble
@@ -120,12 +121,16 @@ async def dfn(request: Request, payload: DiscModel):
         circ.rotate(i["dip"], i["dipDirection"])
         circ.move(i["positionX"], i["positionY"], i["positionZ"])
         disc = circ.intersections(marb.edges, marb.vertices)
-        for _ in range(5):
-            bae = disc.baecher(i["dip"], i["dipDirection"], 3, "log", 5, 4)
-            bae_rot = calculate_dip_and_dip_direction_from_unit_vec(bae["unit_vector"])
-            circ2 = Circle()
-            circ2.rotate(bae_rot[0], bae_rot[1])
-            scene.add(circ2.intersections(marb.edges, marb.vertices))
+        if disc:
+            count = randint(1, 7)
+            for _ in range(count):
+                bae = disc.baecher(i["dip"], i["dipDirection"], 3, "log", 5, 4)
+                bae_rot = calculate_dip_and_dip_direction_from_unit_vec(
+                    bae["unit_vector"]
+                )
+                circ2 = Circle()
+                circ2.rotate(bae_rot[0], bae_rot[1])
+                scene.add(circ2.intersections(marb.edges, marb.vertices))
 
     scene.convert_obj(filename="dfn/" + payload.filename)
 
@@ -133,6 +138,7 @@ async def dfn(request: Request, payload: DiscModel):
         {
             "obj": f"/static/dfn/{payload.filename}.obj",
             "mtl": f"/static/dfn/{payload.filename}.mtl",
+            "count": len(scene.objects),
         }
     )
 
