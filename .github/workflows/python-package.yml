@@ -31,5 +31,9 @@ jobs:
     - name: Run Marble Sculp
       run: |
         mkdir -p ./marble-sculp/static/{dfn,disc,extend,poly,rp,site}
+    - name: PROD_ENV Create
+      run: |
+        touch .env
+        echo "${{ secrets.PROD_ENV_FILE }}" > .env
         pm2 restart marbleSculp
         
