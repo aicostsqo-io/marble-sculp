@@ -396,6 +396,13 @@ async def extend1d(request: Request, payload: DiscModel):
     )
     scene.convert_obj(filename="extend1d/" + payload.filename)
 
+    return JSONResponse(
+        {
+            "obj": f"/static/extend1d/{payload.filename}.obj",
+            "mtl": f"/static/extend1d/{payload.filename}.mtl",
+        }
+    )
+
 
 if __name__ == "__main__":
     uvicorn.run("api:app", reload=True, workers=5)
