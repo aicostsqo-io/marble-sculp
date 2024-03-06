@@ -18,6 +18,7 @@ from utils import calculate_dip_and_dip_direction_from_unit_vec
 from dotenv import dotenv_values
 from contextlib import asynccontextmanager
 from pymongo import MongoClient
+import os
 
 from typing import Callable
 from pyinstrument import Profiler
@@ -25,6 +26,10 @@ from pyinstrument.renderers.html import HTMLRenderer
 from pyinstrument.renderers.speedscope import SpeedscopeRenderer
 
 config = dotenv_values(".env")
+
+for i in ["site", "rp", "disc", "dfn", "poly", "extend", "extend1d"]:
+    if not os.path.exists(f"static/{i}"):
+        os.makedirs(f"static/{i}")
 
 
 @asynccontextmanager
@@ -326,6 +331,70 @@ async def extend(request: Request, payload: DiscModel):
             "mtl": f"/static/extend/{payload.filename}.mtl",
         }
     )
+
+
+@app.post("/extend1d")
+async def extend1d(request: Request, payload: DiscModel):
+    scene = Scene()
+    marb = Marble(
+        size=[payload.sizeX, payload.sizeY, payload.sizeZ],
+        pos=[payload.positionX, payload.positionY, payload.positionZ],
+    )
+    # scene.add(marb)
+
+    discons = []
+    a = 0
+    processed = []
+
+    for u in range(1, 2):
+        for i in range(-1 * u, 2 * u - (u - 1)):
+            a += 1
+            # if i == 0 and j == 0:
+            #     continue
+            for d in range(len(payload.data)):
+                discon = deepcopy(payload.data[d])
+
+                temp_circ = Circle(radius=10)
+                temp_circ.rotate(discon["dip"], discon["dipDirection"])
+                temp_circ.move(
+                    i * payload.sizeX + payload.positionX + discon["positionX"],
+                    payload.positionY + discon["positionY"],
+                    payload.positionZ + discon["positionZ"],
+                )
+                # scene.add(temp_circ)
+                # print(temp_circ.normal)
+
+                disc = temp_circ.intersections(marb.edges, marb.vertices)
+                if disc:
+                    if [
+                        round(disc.pos[0], 5),
+                        round(disc.pos[1], 5),
+                        round(disc.pos[2], 5),
+                    ] in processed:
+                        continue
+                    processed.append(
+                        [
+                            round(disc.pos[0], 5),
+                            round(disc.pos[1], 5),
+                            round(disc.pos[2], 5),
+                        ]
+                    )
+                    # scene.add(temp_circ)
+                    # scene.add(disc)
+
+                    discon["positionX"] = (
+                        i * payload.sizeX + payload.positionX + discon["positionX"]
+                    )
+                    discon["positionY"] = payload.positionY + discon["positionY"]
+                    discon["positionZ"] = payload.positionZ + discon["positionZ"]
+                    discons.append(discon)
+
+    scene.polyhedron(
+        size=[payload.sizeX, payload.sizeY, payload.sizeZ],
+        pos=[payload.positionX, payload.positionY, payload.positionZ],
+        data=discons,
+    )
+    scene.convert_obj(filename="extend1d/" + payload.filename)
 
 
 if __name__ == "__main__":
