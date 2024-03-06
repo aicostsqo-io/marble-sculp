@@ -19,6 +19,7 @@ from dotenv import dotenv_values
 from contextlib import asynccontextmanager
 from pymongo import MongoClient
 import os
+from datetime import datetime
 
 from typing import Callable
 from pyinstrument import Profiler
@@ -94,12 +95,21 @@ PROFILING = True  # Set this from a settings model
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    start_time = time.time()
+    start_time = datetime.utcnow()
     response = await call_next(request)
+    took_time = datetime.utcnow() - start_time
     print(
         "Time took to process the request and return response is {} sec".format(
-            time.time() - start_time
+            took_time
         )
+    )
+    app.db["awsUsage"].insert_one(
+        {
+            "user": "system",
+            "processTime": took_time.total_seconds(),
+            "path": request.url.path,
+            "createdAt": start_time,
+        }
     )
     return response
 
