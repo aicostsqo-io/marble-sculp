@@ -2,6 +2,7 @@ from typing import List
 import math
 import numpy as np
 from utils import normalize
+from scipy.stats import lognorm, expon
 
 
 class Discontinuity:
@@ -70,10 +71,10 @@ class Discontinuity:
         dip *= math.pi / 180
         dip_direction *= math.pi / 180
 
-        exponential_distribution = np.random.exponential(1.0 / mean_fracture_size)
-        lognormal_distribution = np.random.lognormal(
-            mean_fracture_size, sigma_fracture_size
-        )
+        expon_gen = expon(scale=1.0 / mean_fracture_size)
+        exponential_distribution = expon_gen.rvs()
+        log_gen = lognorm(loc=mean_fracture_size, s=sigma_fracture_size)
+        lognormal_distribution = log_gen.rvs()
 
         pole_all_rotated = np.zeros((3, 1))
         if fisher_constant >= 2:
@@ -109,7 +110,7 @@ class Discontinuity:
             # rot_correct_unit_vec = pole_mean / np.linalg.norm(pole_mean)
             rot_correct_unit_vec = normalize(np.dot(pole_mean, random_angle))
             pole_all_rotated = np.cross(rot_correct_unit_vec, pole_dip_rotated)
-            print(pole_all_rotated)
+            # print(pole_all_rotated)
 
         elif fisher_constant <= 0:
             random_dip = 90 * np.random.uniform()
@@ -143,13 +144,13 @@ class Discontinuity:
             return {
                 "pos": [rand_coord_x, rand_coord_y, rand_coord_z],
                 "unit_vector": pole_all_rotated,
-                "value": lognormal_distribution,
+                "value": float(lognormal_distribution),
             }
         elif distribution_size == "exp":
             return {
                 "pos": [rand_coord_x, rand_coord_y, rand_coord_z],
                 "unit_vector": pole_all_rotated,
-                "value": exponential_distribution,
+                "value": float(exponential_distribution),
             }
         elif distribution_size == "det":
             return {
