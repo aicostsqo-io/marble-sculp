@@ -228,12 +228,13 @@ async def dfn(request: Request, payload: FractureModel):
                 if inter:
                     scene.add(inter)
 
-    scene.convert_objV2(filename="dfn/" + payload.filename)
+    postfix = f"-{randint(0,1000)}"
+    scene.convert_objV2(filename="dfn/" + payload.filename + postfix)
 
     return JSONResponse(
         {
-            "obj": f"/static/dfn/{payload.filename}.obj",
-            "mtl": f"/static/dfn/{payload.filename}.mtl",
+            "obj": f"/static/dfn/{payload.filename+postfix}.obj",
+            "mtl": f"/static/dfn/{payload.filename+postfix}.mtl",
             "count": len(scene.objects),
         }
     )
