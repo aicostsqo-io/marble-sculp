@@ -26,10 +26,11 @@ class FractureModel(BaseModel):
     sizeX: float
     sizeY: float
     sizeZ: float
-    fisherConstant: int
+    maxFractureCount: int
+    fisherConstant: float
     distributionSize: FractureTypes
-    meanFractureSize: int
-    sigmaFractureSize: int
+    meanFractureSize: float
+    sigmaFractureSize: float
     data: List[Discontinous]
 
 

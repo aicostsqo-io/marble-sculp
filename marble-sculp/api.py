@@ -193,7 +193,7 @@ async def marble(request: Request, payload: DiscModel):
 
 
 @app.post("/dfn")
-async def dfn(request: Request, payload: DiscModel):
+async def dfn(request: Request, payload: FractureModel):
     scene = Scene()
     marb = Marble(
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],
@@ -207,18 +207,20 @@ async def dfn(request: Request, payload: DiscModel):
         circ.move(i["positionX"], i["positionY"], i["positionZ"])
         disc = circ.intersections(marb.edges, marb.vertices)
         if disc:
-            count = randint(1, 7)
+            count = randint(1, 4)
             for _ in range(count):
-                bae = disc.baecher(i["dip"], i["dipDirection"], 3, "log", 5, 4)
+                bae = disc.baecher(i["dip"], i["dipDirection"], 3, "det", 50, 0)
                 bae_rot = calculate_dip_and_dip_direction_from_unit_vec(
                     bae["unit_vector"]
                 )
-                circ2 = Circle()
+                print(bae["value"])
+                circ2 = Circle(radius=bae["value"])
                 circ2.rotate(bae_rot[0], bae_rot[1])
                 circ2.move(bae["pos"][0], bae["pos"][1], bae["pos"][2])
-                inter = circ2.intersections(marb.edges, marb.vertices)
-                if inter:
-                    scene.add(inter)
+                scene.add(circ2)
+                # inter = circ2.intersections(marb.edges, marb.vertices)
+                # if inter:
+                #     scene.add(inter)
 
     scene.convert_objV2(filename="dfn/" + payload.filename)
 
@@ -276,7 +278,8 @@ async def extend(request: Request, payload: DiscModel):
                     a += 1
                     # if i == 0 and j == 0:
                     #     continue
-                    for d in range(len(payload.data)):
+                    # for d in range(len(payload.data)):
+                    for d in range(3):
                         discon = deepcopy(payload.data[d])
 
                         temp_circ = Circle(radius=10)
