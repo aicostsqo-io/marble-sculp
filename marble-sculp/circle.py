@@ -13,6 +13,7 @@ class Circle:
         self.two_ways = two_ways
         self.pos = [0.0, 0.0, 0.0]
         self.constant = 0
+        self.color = None
 
         self.faces = []
         self.vertices = [self.pos]
@@ -96,7 +97,12 @@ class Circle:
             self.vertices[1], self.vertices[2], self.vertices[3]
         )
 
-    def intersections(self, edges: List[List[int]], vertices: List[List[int]]):
+    def intersections(
+        self,
+        edges: List[List[int]],
+        vertices: List[List[int]],
+        color: List[float] = None,
+    ):
         lines = [[vertices[i[0]], vertices[i[1]]] for i in edges]
         intersection_list = []
         for line in lines:
@@ -147,4 +153,4 @@ class Circle:
             return None
         # self._reset_rotation()
 
-        return Discontinuity(sort_points(intersection_list), self.normal)
+        return Discontinuity(sort_points(intersection_list), self.normal, color=color)

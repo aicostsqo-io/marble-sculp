@@ -1,6 +1,13 @@
+from enum import Enum
 from typing import List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
+
+
+class FractureTypes(str, Enum):
+    exp = "exp"
+    log = "log"
+    det = "det"
 
 
 class Discontinous(TypedDict):
@@ -9,6 +16,21 @@ class Discontinous(TypedDict):
     positionX: float
     positionY: float
     positionZ: float
+
+
+class FractureModel(BaseModel):
+    filename: str
+    positionX: float
+    positionY: float
+    positionZ: float
+    sizeX: float
+    sizeY: float
+    sizeZ: float
+    fisherConstant: int
+    distributionSize: FractureTypes
+    meanFractureSize: int
+    sigmaFractureSize: int
+    data: List[Discontinous]
 
 
 class DiscModel(BaseModel):

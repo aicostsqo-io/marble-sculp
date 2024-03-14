@@ -6,12 +6,19 @@ from utils import normalize
 
 class Discontinuity:
     def __init__(
-        self, vertices: List[List[int]], normal: List[int] = None, two_ways: bool = True
+        self,
+        vertices: List[List[int]],
+        normal: List[int] = None,
+        two_ways: bool = True,
+        color: List[float] = None,
     ):
         self.vertices = vertices
         self.faces = [[]]
         self.normal = normal
         self.pos = [0.0, 0.0, 0.0]
+        self.color = color
+        self.min_region = []
+        self.max_region = []
 
         for ind, value in enumerate(self.vertices):
             self.faces[0].append(ind)
@@ -30,6 +37,18 @@ class Discontinuity:
 
             self.faces = self.faces + temp_faces
 
+    def calculate_regions(self):
+        min_x = min(self.vertices, key=lambda x: x[0])[0]
+        min_y = min(self.vertices, key=lambda x: x[1])[1]
+        min_z = min(self.vertices, key=lambda x: x[2])[2]
+
+        max_x = max(self.vertices, key=lambda x: x[0])[0]
+        max_y = max(self.vertices, key=lambda x: x[1])[1]
+        max_z = max(self.vertices, key=lambda x: x[2])[2]
+
+        self.max_region = [max_x, max_y, max_z]
+        self.min_region = [min_x, min_y, min_z]
+
     def baecher(
         self,
         dip: int,
@@ -45,6 +64,8 @@ class Discontinuity:
             )
         if fisher_constant > 0 and fisher_constant < 2:
             raise ValueError("fisher_constant value mustn't be between 0 and 2")
+
+        self.calculate_regions()
 
         dip *= math.pi / 180
         dip_direction *= math.pi / 180
@@ -108,14 +129,31 @@ class Discontinuity:
 
         width = 1
         height = 1
-        depth = 1
-        rand_coord_x = width + np.random.uniform() * (width - 0)
-        rand_coord_y = height + np.random.uniform() * (height - 0)
-        rand_coord_z = depth + np.random.uniform() * (depth - 0)
+        rand_coord_x = self.min_region[0] - np.random.uniform() * (
+            self.max_region[0] - self.min_region[0]
+        )
+        rand_coord_y = self.min_region[1] - np.random.uniform() * (
+            self.max_region[1] - self.min_region[1]
+        )
+        rand_coord_z = self.min_region[2] - np.random.uniform() * (
+            self.max_region[2] - self.min_region[2]
+        )
 
         if distribution_size == "log":
             return {
                 "pos": [rand_coord_x, rand_coord_y, rand_coord_z],
                 "unit_vector": pole_all_rotated,
                 "value": lognormal_distribution,
+            }
+        elif distribution_size == "exp":
+            return {
+                "pos": [rand_coord_x, rand_coord_y, rand_coord_z],
+                "unit_vector": pole_all_rotated,
+                "value": exponential_distribution,
+            }
+        elif distribution_size == "det":
+            return {
+                "pos": [rand_coord_x, rand_coord_y, rand_coord_z],
+                "unit_vector": pole_all_rotated,
+                "value": mean_fracture_size,
             }

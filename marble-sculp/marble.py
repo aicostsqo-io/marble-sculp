@@ -6,6 +6,7 @@ class Marble:
         self.type = "marble"
         self.size = size
         self.pos = pos
+        self.color = None
         self.volume = size[0] * size[1] * size[2]
         self.vertices = [
             [0, 0, 0],  # A 0
