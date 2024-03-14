@@ -129,7 +129,7 @@ async def site(request: Request, payload: SiteModel):
         )
         scene.add(marb)
 
-    scene.convert_obj(filename="site/" + payload.filename)
+    scene.convert_objV2(filename="site/" + payload.filename)
 
     return JSONResponse(
         {
@@ -148,7 +148,7 @@ async def rp(request: Request, payload: RPModel):
     )
     scene.add(marb)
 
-    scene.convert_obj(filename="rp/" + payload.filename)
+    scene.convert_objV2(filename="rp/" + payload.filename)
 
     return JSONResponse(
         {
@@ -182,7 +182,7 @@ async def marble(request: Request, payload: DiscModel):
         if disc:
             scene.add(disc)
 
-    scene.convert_obj(filename="disc/" + payload.filename)
+    scene.convert_objV2(filename="disc/" + payload.filename)
 
     return JSONResponse(
         {
@@ -193,7 +193,7 @@ async def marble(request: Request, payload: DiscModel):
 
 
 @app.post("/dfn")
-async def dfn(request: Request, payload: DiscModel):
+async def dfn(request: Request, payload: FractureModel):
     scene = Scene()
     marb = Marble(
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],
@@ -215,9 +215,12 @@ async def dfn(request: Request, payload: DiscModel):
                 )
                 circ2 = Circle()
                 circ2.rotate(bae_rot[0], bae_rot[1])
-                scene.add(circ2.intersections(marb.edges, marb.vertices))
+                circ2.move(bae["pos"][0], bae["pos"][1], bae["pos"][2])
+                inter = circ2.intersections(marb.edges, marb.vertices)
+                if inter:
+                    scene.add(inter)
 
-    scene.convert_obj(filename="dfn/" + payload.filename)
+    scene.convert_objV2(filename="dfn/" + payload.filename)
 
     return JSONResponse(
         {
@@ -242,7 +245,7 @@ async def poly(request: Request, payload: DiscModel):
         data=payload.data,
     )
 
-    scene.convert_obj(filename="poly/" + payload.filename)
+    scene.convert_objV2(filename="poly/" + payload.filename)
 
     return JSONResponse(
         {
@@ -333,7 +336,7 @@ async def extend(request: Request, payload: DiscModel):
         data=discons,
     )
 
-    scene.convert_obj(filename="extend/" + payload.filename)
+    scene.convert_objV2(filename="extend/" + payload.filename)
 
     return JSONResponse(
         {
@@ -404,7 +407,7 @@ async def extend1d(request: Request, payload: DiscModel):
         pos=[payload.positionX, payload.positionY, payload.positionZ],
         data=discons,
     )
-    scene.convert_obj(filename="extend1d/" + payload.filename)
+    scene.convert_objV2(filename="extend1d/" + payload.filename)
 
     return JSONResponse(
         {

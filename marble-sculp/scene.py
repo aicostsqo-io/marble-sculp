@@ -21,6 +21,40 @@ class Scene:
     def add(self, _object):
         self.objects.append(copy.deepcopy(_object))
 
+    def convert_objV2(self, filename: str) -> str:
+        data = "mtllib object.mtl\n"
+        material = ""
+        index_map = {"vertices": {}, "faces": {}}
+        offset = 1
+        for ind, obj in enumerate(self.objects):
+            index_map["vertices"][ind] = len(obj.vertices)
+            # Vertices
+            data += f"o Marble{ind}\n"
+            for vertex in obj.vertices:
+                data += f"v {vertex[0]} {vertex[1]} {vertex[2]}\n"
+
+            data += "s 0\n"
+            data += f"usemtl Material.{ind}\n"
+            for face in obj.faces:
+                temp = ""
+                for vertex in face:
+                    temp += f"{vertex+offset} "
+                data += f"f {temp}\n"
+            offset += index_map["vertices"][ind]
+
+            # Material
+            if obj.color:
+                material += f"newmtl Material.{ind}\nNs 360.000000\nKa 1.000000 1.000000 1.000000\nKd {obj.color[0]} {obj.color[1]} {obj.color[2]}\nKs 0.500000 0.500000 0.500000\nKe 0.000000 0.000000 0.000000\nNs 0.000000\nd 1.000000\nillum 9\n\n"
+            else:
+                material += f"newmtl Material.{ind}\nNs 360.000000\nKa 1.000000 1.000000 1.000000\nKd {random.randint(0, 1000000)/1000000} {random.randint(0, 1000000)/1000000} {random.randint(0, 1000000)/1000000}\nKs 0.500000 0.500000 0.500000\nKe 0.000000 0.000000 0.000000\nNs 0.000000\nd 1.000000\nillum 9\n\n"
+
+        with open(f"./static/{filename}.mtl", "w") as fp:
+            fp.write(material)
+
+        with open(f"./static/{filename}.obj", "w") as fp:
+            fp.write(data)
+        return filename
+
     def convert_obj(self, filename: str) -> str:
         data = "mtllib object.mtl\n"
         index_map = {"vertices": {}, "faces": {}}
