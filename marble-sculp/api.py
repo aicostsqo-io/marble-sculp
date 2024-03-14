@@ -193,7 +193,7 @@ async def marble(request: Request, payload: DiscModel):
 
 
 @app.post("/dfn")
-async def dfn(request: Request, payload: FractureModel):
+async def dfn(request: Request, payload: DiscModel):
     scene = Scene()
     marb = Marble(
         size=[payload.sizeX, payload.sizeY, payload.sizeZ],
