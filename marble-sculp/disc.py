@@ -90,7 +90,14 @@ class Discontinuity:
                 -math.sin(echis),
             ]
             fisher_dip_dev_angle = math.acos(
-                (fisher_constant + math.log(1 - np.random.uniform())) / fisher_constant
+                max(
+                    min(
+                        (fisher_constant + math.log(1 - np.random.uniform()))
+                        / fisher_constant,
+                        1,
+                    ),
+                    -1,
+                )
             )
             echis = (math.pi / 2) - (dip - fisher_dip_dev_angle)
             pole_dip_rotated = [
