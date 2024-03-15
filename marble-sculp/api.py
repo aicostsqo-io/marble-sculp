@@ -223,10 +223,10 @@ async def dfn(request: Request, payload: FractureModel):
                 circ2 = Circle(radius=bae["value"])
                 circ2.rotate(bae_rot[0], bae_rot[1])
                 circ2.move(bae["pos"][0], bae["pos"][1], bae["pos"][2])
-                # scene.add(circ2)
-                inter = circ2.intersections(marb.edges, marb.vertices)
-                if inter:
-                    scene.add(inter)
+                scene.add(circ2)
+                # inter = circ2.intersections(marb.edges, marb.vertices)
+                # if inter:
+                #     scene.add(inter)
 
     postfix = f"-{randint(0,1000)}"
     scene.convert_objV2(filename="dfn/" + payload.filename + postfix)
