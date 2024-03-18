@@ -286,7 +286,11 @@ async def extend(request: Request, payload: DiscModel):
                     # if i == 0 and j == 0:
                     #     continue
                     # for d in range(len(payload.data)):
-                    for d in range(3):
+                    if len(payload.data) >= 3:
+                        adet = 3
+                    else:
+                        adet = len(payload.data)
+                    for d in range(adet):
                         discon = deepcopy(payload.data[d])
 
                         temp_circ = Circle(radius=10)
