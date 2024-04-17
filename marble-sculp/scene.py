@@ -194,7 +194,7 @@ class Scene:
                             "rpId": ObjectId(self.filename),
                             "polyhedronId": q + 1,
                             "faceId": fq + 1,
-                            "vertexes": face.tolist(),
+                            "vertexes": face,
                             "createdAt": datetime.now(),
                             "updatedAt": datetime.now(),
                         }
