@@ -156,6 +156,9 @@ class Scene:
             objects = temp_objects
             temp_objects = []
 
+        self.db["outputpolyhedrons"].delete_many({"rpId": ObjectId(self.filename)})
+        self.db["outputvertex"].delete_many({"rpId": ObjectId(self.filename)})
+        self.db["outputfaces"].delete_many({"rpId": ObjectId(self.filename)})
         for q, i in enumerate(objects):
             self.add(i)
             if self.db is not None:
