@@ -159,10 +159,13 @@ class Scene:
         self.db["outputpolyhedrons"].delete_many({"rpId": ObjectId(self.filename)})
         self.db["outputvertex"].delete_many({"rpId": ObjectId(self.filename)})
         self.db["outputfaces"].delete_many({"rpId": ObjectId(self.filename)})
+        polyhedrons = []
+        vertexes = []
+        faces = []
         for q, i in enumerate(objects):
             self.add(i)
             if self.db is not None:
-                self.db["outputpolyhedrons"].insert_one(
+                polyhedrons.append(
                     {
                         "rpId": ObjectId(self.filename),
                         "polyhedronId": q + 1,
@@ -175,7 +178,7 @@ class Scene:
                     }
                 )
                 for vq, vertex in enumerate(i.vertices):
-                    self.db["outputvertex"].insert_one(
+                    vertexes.append(
                         {
                             "rpId": ObjectId(self.filename),
                             "polyhedronId": q + 1,
@@ -189,18 +192,21 @@ class Scene:
                     )
 
                 for fq, face in enumerate(i.faces):
-                    self.db["outputfaces"].insert_one(
+                    faces.append(
                         {
                             "rpId": ObjectId(self.filename),
                             "polyhedronId": q + 1,
                             "faceId": fq + 1,
-                            "vertexes": face,
+                            "vertexes": face if type(face) == list else face.tolist(),
                             "createdAt": datetime.now(),
                             "updatedAt": datetime.now(),
                         }
                     )
-
-        print(len(objects), len(processed))
+        if self.db is not None:
+            self.db["outputpolyhedrons"].insert_many(polyhedrons)
+            self.db["outputvertex"].insert_many(vertexes)
+            self.db["outputfaces"].insert_many(faces)
+        print(len(objects), len(polyhedrons), len(vertexes), len(faces))
 
 
 if __name__ == "__main__":
