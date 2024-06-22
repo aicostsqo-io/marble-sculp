@@ -62,6 +62,9 @@ class SiteModel(BaseModel):
     sizeX: float
     sizeY: float
     sizeZ: float
+    rotationX: float
+    rotationY: float
+    rotationZ: float
 
 
 class SiteModel(BaseModel):

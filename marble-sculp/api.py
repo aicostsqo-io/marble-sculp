@@ -125,7 +125,12 @@ async def site(request: Request, payload: SiteModel):
     for i in payload.data:
         marb = Marble(
             size=[i.sizeX, i.sizeY, i.sizeZ],
-            pos=[i.positionX, i.positionY, i.positionZ],
+            pos=[
+                i.positionX - payload.data[0].positionX,
+                i.positionY - payload.data[0].positionY,
+                i.positionZ - payload.data[0].positionZ,
+            ],
+            rotation=[i.rotationX, i.rotationY, i.rotationZ],
         )
         scene.add(marb)
 

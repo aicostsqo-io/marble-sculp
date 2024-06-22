@@ -1,8 +1,15 @@
 from typing import List
+import math
+import numpy as np
 
 
 class Marble:
-    def __init__(self, size: List[int] = [1, 1, 1], pos: List[int] = [0, 0, 0]):
+    def __init__(
+        self,
+        size: List[int] = [1, 1, 1],
+        pos: List[int] = [0, 0, 0],
+        rotation: List[int] = [0, 0, 0],
+    ):
         self.type = "marble"
         self.size = size
         self.pos = pos
@@ -33,7 +40,11 @@ class Marble:
             self.edges.append([face[2], face[3]])
             self.edges.append([face[3], face[0]])
 
-        self.move(-(size[0] / 2), -(size[1] / 2), -(size[2] / 2))
+        # Rotate the marble
+        if rotation[0] != 0 or rotation[1] != 0 or rotation[2] != 0:
+            self.rotate(rotation[0], rotation[1], rotation[2])
+
+        # self.move(-(size[0] / 2), -(size[1] / 2), -(size[2] / 2))
         if pos[0] != 0 or pos[1] != 0 or pos[2] != 0:
             self.move(pos[0], pos[1], pos[2])
 
@@ -55,4 +66,40 @@ class Marble:
         new_vertices = []
         for vertex in self.vertices:
             new_vertices.append([vertex[0] + x, vertex[1] + y, vertex[2] + z])
+        self.vertices = new_vertices
+
+    def rotate(self, angle_x: float, angle_y: float, angle_z: float):
+
+        new_vertices = []
+        for vertex in self.vertices:
+            new_vertex = vertex
+            # Rotate around x-axis
+            if angle_x != 0:
+                new_x = [
+                    [1, 0, 0],
+                    [0, math.cos(angle_x), -math.sin(angle_x)],
+                    [0, math.sin(angle_x), math.cos(angle_x)],
+                ]
+                new_vertex = np.dot(new_x, new_vertex)
+
+            # Rotate around y-axis
+            if angle_y != 0:
+                new_y = [
+                    [math.cos(angle_y), 0, math.sin(angle_y)],
+                    [0, 1, 0],
+                    [-math.sin(angle_y), 0, math.cos(angle_y)],
+                ]
+                new_vertex = np.dot(new_y, new_vertex)
+
+            # Rotate around z-axis
+            if angle_z != 0:
+                new_z = [
+                    [math.cos(angle_z), -math.sin(angle_z), 0],
+                    [math.sin(angle_z), math.cos(angle_z), 0],
+                    [0, 0, 1],
+                ]
+                new_vertex = np.dot(new_z, new_vertex)
+
+            new_vertices.append(new_vertex)
+
         self.vertices = new_vertices
