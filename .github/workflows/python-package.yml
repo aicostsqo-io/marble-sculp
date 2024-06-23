@@ -37,5 +37,5 @@ jobs:
       run: |
         touch marble-sculp/.env
         echo "${{ secrets.PROD_ENV_FILE }}" > .env
-        pm2 restart marbleSculp
+        pm2 restart marbleSculpApi
         
