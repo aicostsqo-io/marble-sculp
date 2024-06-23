@@ -437,4 +437,4 @@ async def extend1d(request: Request, payload: DiscModel):
 
 
 if __name__ == "__main__":
-    uvicorn.run("api:app", workers=5, port=80)
+    uvicorn.run("api:app", workers=5, port=8080)
